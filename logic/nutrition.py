@@ -5,7 +5,6 @@ import util.json_parse as json_parse
 class Person:
     # States vars TODO:
     state={
-<<<<<<< HEAD
         "Energy":100,
         "Sodium":100,
         "Mineral":100,
@@ -18,9 +17,6 @@ class Person:
     }
 
     # Check events(?) and update appearence
-=======
-
->>>>>>> a810f880b8cf4b2734caaacf6dc0ea6d70fe7375
     def check_state(self):
         # Update size
         if self.state["Energy"]<50:
