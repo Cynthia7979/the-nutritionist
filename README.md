@@ -5,6 +5,7 @@ Creatica 2020 Entry
 * [Board of Things](https://docs.qq.com/slide/DZFFmRlhjV0JnTUZY)
 * [Creatica](https://www.creatica.io)
 * [Creatica DevPost](https://creatica.devpost.com)
+* [Pygame Documentation](https://www.pygame.org/docs/index.html)
 
 # Technical Specifications (?)
 If using Anaconda, run `conda create --name <name_of_env>` under this directory
