@@ -7,7 +7,7 @@ DEFAULT_LOGLEVEL = logging.DEBUG
 DEFAULT_LOG_FORMATTER = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 DEFAULT_STREAMHANDLER = logging.StreamHandler()
-DEFAULT_FILEHANDLER = logging.FileHandler('the_nutritionist.log.log')
+DEFAULT_FILEHANDLER = logging.FileHandler('the_nutritionist.log')
 DEFAULT_STREAMHANDLER.setLevel(logging.DEBUG)
 DEFAULT_FILEHANDLER.setLevel(DEFAULT_LOGLEVEL)
 DEFAULT_FILEHANDLER.setFormatter(DEFAULT_LOG_FORMATTER)
