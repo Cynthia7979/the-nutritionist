@@ -1,3 +1,6 @@
+# Enter custom gitignore here
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
