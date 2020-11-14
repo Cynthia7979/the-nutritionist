@@ -1,16 +1,24 @@
 from util import *
 class Person:
-    # States vars
-
+    # States vars TODO:
+    state={
+        "Energy":100
+        "Sodium":100
+        "Mineral":100
+        "Vitamin":100
+    }
     # Check events(?)
-    def state(self):
+    def check_state(self):
         return 0
     # Eat and update states
     def eat(foods=[]):
         for food in foods:
-            pass #update state
-        return self.state()
+            pass #TODO:update state
+        return self.check_state()
 
+    def time_pass():
+        #TODO:update state
+        return self.check_state()
     
 
 class FoodList:
