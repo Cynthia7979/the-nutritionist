@@ -69,12 +69,20 @@ class Person:
 
     # Eat and update states
     def eat(self, foods=()):
+        if food==():
+            render_text("You give up eating and go back to work")
+        else:
+            render_text("You enjoyed your food very much")
         for food in foods:
             pass  # TODO:update state
         return self.check_state()
 
     def time_pass(self):
-        # TODO:update state
+        self.state["Energy"]-=5
+        self.state["Vitamin"]-=1
+        self.state["Mineral"]-=1
+        self.state["Sodium"]-=3
+        render_text("You feel hungry and start ordering food.")
         return self.check_state()
     
 
