@@ -1,4 +1,4 @@
-import json_parse
+from util import *
 class Person:
     # States vars
 
