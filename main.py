@@ -7,7 +7,7 @@ DISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))
 
 
 def main():
-    # state = (scene_specific_global_var, *args)
+    # state = (scenes.state_value, *args)
     # Example: (TO_PLAY, './saves/load_file.txt')
     # Can also use pygame vars like (QUIT, 0)
     pygame.init()
