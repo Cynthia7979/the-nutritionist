@@ -1,7 +1,11 @@
 from util import *
+import util.json_parse as json_parse
+
+
 class Person:
     # States vars TODO:
     state={
+<<<<<<< HEAD
         "Energy":100,
         "Sodium":100,
         "Mineral":100,
@@ -14,6 +18,9 @@ class Person:
     }
 
     # Check events(?) and update appearence
+=======
+
+>>>>>>> a810f880b8cf4b2734caaacf6dc0ea6d70fe7375
     def check_state(self):
         # Update size
         if self.state["Energy"]<50:
@@ -59,24 +66,25 @@ class Person:
             return 5 #Die of nervous system breakdown, maybe illusion
 
         return 0
+
     # Eat and update states
-    def eat(foods=[]):
+    def eat(self, foods=()):
         for food in foods:
-            pass #TODO:update state
+            pass  # TODO:update state
         return self.check_state()
 
-    def time_pass():
-        #TODO:update state
+    def time_pass(self):
+        # TODO:update state
         return self.check_state()
     
 
 class FoodList:
-    foods={}
-    def __init__(self,path):
-        foods=json_parse.get_data(path)
+    foods = {}
+
+    def __init__(self, path):
+        foods = json_parse.get_data(path)
         for food in foods:
-            self.foods[food[name]]=food
-        
+            self.foods[food['name']]=food
 
     class Food:
         def __init__(self,):
