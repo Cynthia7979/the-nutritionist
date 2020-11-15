@@ -269,8 +269,13 @@ def start(display_surf, load_from):
                                 food_page_screen.update(cart)
                                 scene_logger.info(f'Added {food["name"]} to cart')
                         elif collision == confirm_btn:
-                            player.eat(cart)
-                            
+                            msgs_to_add, return_value = player.eat(cart)
+                            messages += msgs_to_add
+                            text_box.update(messages)
+                            scene_logger.info(f'Eaten cart {cart}: {return_value}')
+                            cart = []
+                            food_page_screen.update(cart)
+                            if return_value != 0: return return_value
                 for collision in mouse_sprite.group_collide(general_screen_clickables):
                     if collision == back_icon:
                         active_screen, last_screen = last_screen, active_screen

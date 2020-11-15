@@ -2,6 +2,7 @@ from util import *
 import util.json_parse as json_parse
 
 
+@logged_class
 class Person:
     def __init__(self, energy=100, sodium=100, mineral=100, vitamin=100,
                  age=18, health=3, size=1, state=None, apr=None):
@@ -49,46 +50,50 @@ class Person:
 
 
         if self.state["Sodium"] > 200:
-            return 1  # Die of heart attack
+            return END_HEART_ATTACK  # Die of heart attack
         
         if self.state["Mineral"] < 0 or self.state["Vitamin"] < 0:
-            return 2  # Die of lack of essencials, maybe illusion
+            return END_VITAMINS  # Die of lack of essencials, maybe illusion
         
         if self.state["Energy"] > 300:
-            return 3  # Die of obesity
+            return END_OBESITY  # Die of obesity
 
         if self.state["Energy"] < 0:
-            return 4  # Starve to death
+            return END_STARVATION  # Starve to death
 
         if self.state["Sodium"] < 0:
-            return 5  # Die of nervous system breakdown, maybe illusion
+            return END_ILLUSION  # Die of nervous system breakdown, maybe illusion
 
         if self.apr["Age"]>80:
-            return 6  # Die for living too long
+            return END_NORMAL  # Die for living too long
 
         return 0
 
     # Eat and update states
     def eat(self, foods=()):
+        self.logger.debug(self.state)
+        self.logger.debug(self.apr)
+        messages = []
         if foods == ():
-            render_text("You give up eating and go back to work")
+            messages.append("You gave up eating and went back to work")
         else:
-            render_text("You enjoyed your food very much")
+            messages.append("You enjoyed your food very much")
         for food in foods:
             self.state["Energy"] += 5/300 * food["Energy"]
             self.state["Vitamin"] += 1/100 * food["Vitamin"]
             self.state["Mineral"] += 1/3000 * food["Mineral"]
             self.state["Sodium"] += 1/100 * food["Sodium"]
             # TODO:fine-tune the parameters
-        return self.check_state()
+        return messages, self.check_state()
 
     def time_pass(self):
+        messages = []
         self.state["Energy"] -= 5
         self.state["Vitamin"] -= 1
         self.state["Mineral"] -= 1
         self.state["Sodium"] -= 3
-        render_text("You feel hungry and start ordering food.")
-        return self.check_state()
+        messages.append("You feel hungry and start ordering food.")
+        return messages, self.check_state()
     
 
 class FoodList:
