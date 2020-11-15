@@ -59,6 +59,9 @@ class Person:
         if self.state["Sodium"] < 0:
             return 5  # Die of nervous system breakdown, maybe illusion
 
+        if self.apr["Age"]>80:
+            return 6  # Die for living too long
+
         return 0
 
     # Eat and update states
@@ -68,7 +71,11 @@ class Person:
         else:
             render_text("You enjoyed your food very much")
         for food in foods:
-            pass  # TODO:update state
+            self.state["Energy"] += 5/300 * food["Energy"]
+            self.state["Vitamin"] += 1/100 * food["Vitamin"]
+            self.state["Mineral"] += 1/3000 * food["Mineral"]
+            self.state["Sodium"] += 1/100 * food["Sodium"]
+            # TODO:fine-tune the parameters
         return self.check_state()
 
     def time_pass(self):
