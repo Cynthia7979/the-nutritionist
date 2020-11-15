@@ -79,19 +79,19 @@ class Person:
         else:
             messages.append("You enjoyed your food very much")
         for food in foods:
-            self.state["Energy"] += 5/300 * food["Energy"]
+            self.state["Energy"] += 1/80 * food["Energy"]
             self.state["Vitamin"] += 1/100 * food["Vitamin"]
             self.state["Mineral"] += 1/3000 * food["Mineral"]
-            self.state["Sodium"] += 1/100 * food["Sodium"]
+            self.state["Sodium"] += 1/300 * food["Sodium"]
             # TODO:fine-tune the parameters
         return messages, self.check_state()
 
     def time_pass(self):
         messages = []
         self.state["Energy"] -= 5
-        self.state["Vitamin"] -= 1
-        self.state["Mineral"] -= 1
-        self.state["Sodium"] -= 3
+        self.state["Vitamin"] -= 3
+        self.state["Mineral"] -= 3
+        self.state["Sodium"] -= 2.5
         messages.append("You feel hungry and start ordering food.")
         return messages, self.check_state()
     
@@ -103,9 +103,3 @@ class FoodList:
         foods = json_parse.get_data(path)
         for food in foods:
             self.foods[food['name']] = food
-
-    class Food:
-        def __init__(self,):
-            pass
-
-#class

@@ -1,0 +1,31 @@
+You feel hungry and start ordering food.
+(foods turn inedible)
+You are not quite sure what you have ordered are, in common usage of the word, food.
+
+You enjoyed your food very much.
+
+You feel hungry quicker than ever and start ordering whatever it is on the menu.
+
+Your last meal was so enjoyable that you decided you should order at least 4 dishes.
+
+You enjoyed what you have ordered very much.
+
+You feel full for having more dishes than ever at your last meal and decided to skip this one.
+
+You feel that it seems you have lost your ability to feel hunger, and decided to experiment with that, that is, to skip this meal as well.
+
+You, in the longest gap between meals you have ever gone through, find life seem so pointless without the meals.
+
+You missed your food and started ordering food.
+(foods turn edible)
+You are dissappointed by the menu, but ordered one dish nevertheless.
+
+You tasted the food, but did not enjoy it.
+
+You start wondering why you have spent your life in ordering and comsuming such inattractive materials.
+
+And why you have called them "food" for <insert age> years.
+
+You waited for the true foods to appear.
+
+And you waited...
