@@ -16,7 +16,7 @@ def main():
     pygame.display.set_caption('The Nutritionist')
 
     # For debugging ↓
-    state = end_obesity.start(DISPLAY)
+    # state = end_obesity.start(DISPLAY)
 
     state = main_menu.start(DISPLAY)
     if QUIT in state:

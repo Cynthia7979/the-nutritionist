@@ -196,6 +196,25 @@ class RecipePage(pygame.sprite.Sprite):
         self.__init__(self.food, cart)
 
 
+class Avatar(pygame.sprite.Sprite):
+    def __init__(self, person: nutrition.Person):
+        super().__init__()
+        self.person = person
+        self.image = pygame.Surface((220, 270), flags=SRCALPHA
+                                    )
+        self.rect = self.image.get_rect(bottomleft=(10, 300))
+        avatar_image, avatar_rect = load_image(self.get_avatar(person.apr['Health']),
+                                           (220, 220))
+        self.image.blit(avatar_image, (0, 0))
+        label_surf, label_rect = render_text('YOU', 36, WHITE)
+        label_rect.midbottom = (110, 260)
+        self.image.blit(label_surf, label_rect)
+
+    def get_avatar(self, health):
+        # Add more logic when (if) more images are drawn
+        return f'./resources/age_young_health_{health}_obesity_1.png'
+
+
 def start(display_surf, load_from):
     global scene_logger
     scene_logger = get_public_logger('play')
@@ -220,8 +239,10 @@ def start(display_surf, load_from):
     back_icon = BottomMenuButton('resources/back_icon.png', PHONE_LEFT+90, dimensions=(20, 20))
     menu_icon = BottomMenuButton('resources/menu_icon.png', PHONE_LEFT+175, dimensions=(20, 20))
     text_box = Texts(messages)
+    avatar = Avatar(player)
     text_box.add(general_screen)
     Phone().add(general_screen)
+    avatar.add(general_screen)
     back_icon.add(general_screen, general_screen_clickables)
     menu_icon.add(general_screen, general_screen_clickables)
 
