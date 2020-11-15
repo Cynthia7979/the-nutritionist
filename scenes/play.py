@@ -8,6 +8,13 @@ from logic import nutrition
 RECIPE_ROW_HEIGHT = 70
 TOP_BAR_HEIGHT = 40
 
+
+class Screen(pygame.sprite.Group):
+    def __init__(self, name, *args, **kwargs):
+        super().__init__(*args, *kwargs)
+        self.name = name
+
+
 class MouseSprite(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -15,6 +22,7 @@ class MouseSprite(pygame.sprite.Sprite):
 
     def group_collide(self, group):
         return pygame.sprite.spritecollide(self, group, False)
+
 
 @logged_class
 class Texts(pygame.sprite.Sprite):
@@ -47,6 +55,9 @@ class Texts(pygame.sprite.Sprite):
             current_bottom -= margin
             if current_bottom < 0: break
         self.image.blits(to_blit)
+
+    def update(self, texts):
+        self.__init__(texts)
 
 
 class Phone(pygame.sprite.Sprite):
@@ -86,19 +97,25 @@ class BottomMenuButton(pygame.sprite.Sprite):
         self.rect.center = (centerx, centery)
 
 
-class AppIcon(pygame.sprite.Sprite):
-    def __init__(self, left, top):
+class Button(pygame.sprite.Sprite):
+    def __init__(self, left, top, width, height, text):
         super().__init__()
 
-        self.image = pygame.Surface((101, 101))
+        self.image = pygame.Surface((width+1, height+1))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect(topleft=(left, top))
-        pygame.draw.rect(self.image, BLACK, (0, 0, 100, 100), width=1, border_radius=2)
+        pygame.draw.rect(self.image, BLACK, (0, 0, width, height), width=1, border_radius=2)
+        text_surf, text_rect = render_text(text, 20)
+        text_rect.center = (width/2, height/2)
+        self.image.blit(text_surf, text_rect)
 
 
+@logged_class
 class RecipeRow(pygame.sprite.Sprite):
     def __init__(self, top, food_data, index):
         super().__init__()
+        self.logger.debug(f'Creating RecipeRow for top={top}, index={index}, food={food_data}')
+        self.index = index
 
         self.image = pygame.Surface((PHONE_WIDTH, RECIPE_ROW_HEIGHT))
         self.rect = self.image.get_rect(topleft=(PHONE_LEFT, top))
@@ -111,21 +128,49 @@ class RecipeRow(pygame.sprite.Sprite):
         category_rect.topleft = (10, 40)
         self.image.blits(((name_surf, name_rect), (category_surf, category_rect)))
 
-        self.index = index
 
-
+@logged_class
 class RecipePage(pygame.sprite.Sprite):
-    def __init__(self, food):
+    def __init__(self, food, cart):
         super().__init__()
+        self.logger.debug(f'Render Recipe Page for {food}')
 
+        self.food = food
         self.image = pygame.Surface((PHONE_WIDTH, PHONE_HEIGHT), flags=SRCALPHA)
         self.rect = self.image.get_rect(topleft=(PHONE_LEFT, PHONE_TOP))
 
         title_surf, title_rect = render_text(food['name'], 30)
-        title_rect.topleft = (PHONE_LEFT+20, TOP_BAR_HEIGHT+10)
+        title_rect.topleft = (10, TOP_BAR_HEIGHT+5)
         category_surf, category_rect = render_text(food['category'], 20)
-        category_rect.topleft = (PHONE_LEFT+20, title_rect.bottom+10)
-        self.image.blits(((title_surf, title_rect), (category_surf, category_rect)))
+        category_rect.topleft = (10, title_rect.bottom+5)
+        description_surf, description_rect = render_text(food['description'].replace('\n',''), 20)
+        description_rect.topleft = (10, category_rect.bottom+10)
+
+        energy_surf, energy_rect = render_text(f'Energy         {food["Energy"]}kCal', 20, font_file=DEFAULT_ITALICS_FILE)
+        energy_rect.topleft = (10, description_rect.bottom+30)
+        sodium_surf, sodium_rect = render_text(f'Sodium         {food["Sodium"]}mg', 20, font_file=DEFAULT_ITALICS_FILE)
+        sodium_rect.topleft = (10, energy_rect.bottom + 10)
+        mineral_surf, mineral_rect = render_text(f'Mineral          {food["Mineral"]}mg', 20, font_file=DEFAULT_ITALICS_FILE)
+        mineral_rect.topleft = (10, sodium_rect.bottom + 10)
+        vitamin_surf, vitamin_rect = render_text(f'Vitamin          {food["Vitamin"]}mcg', 20, font_file=DEFAULT_ITALICS_FILE)
+        vitamin_rect.topleft = (10, mineral_rect.bottom + 10)
+
+        cart_surf, cart_rect = render_text('Cart:', 30)
+        cart_rect.topleft = (10, mineral_rect.bottom+50)
+        current_top = cart_rect.bottom+20
+        for item in cart:
+            item_surf, item_rect = render_text(item['name'], 20)
+            item_rect.topleft = (60, current_top)
+            self.image.blit(item_surf, item_rect)
+            current_top = item_rect.bottom+10
+        self.logger.debug(title_rect)
+        self.logger.debug(category_rect)
+        self.image.blits(((title_surf, title_rect), (category_surf, category_rect), (description_surf, description_rect),
+                          (energy_surf, energy_rect), (sodium_surf, sodium_rect), (mineral_surf, mineral_rect),
+                          (vitamin_surf, vitamin_rect), (cart_surf, cart_rect)))
+
+    def update(self, cart):
+        self.__init__(self.food, cart)
 
 
 def start(display_surf, load_from):
@@ -139,13 +184,13 @@ def start(display_surf, load_from):
     else:
         player = nutrition.Person(**json_parse.get_data(load_from))
     food_data = json_parse.get_data('food_data.json')
-    messages = ['This is a message', 'This is another message', 'This is a very long message as you start to feel tired',
-                'message', 'message', 'message']
+    messages = []
+    cart = []
 
     # UI
     left_dialog_rect = pygame.Rect((0, 0,
                                     LEFT_DIALOG_WIDTH, LEFT_DIALOG_HEIGHT))
-    general_screen = pygame.sprite.Group()
+    general_screen = Screen('general')
     general_screen_clickables = pygame.sprite.Group()
     back_icon = BottomMenuButton('resources/back_icon.png', PHONE_LEFT+90, dimensions=(20, 20))
     menu_icon = BottomMenuButton('resources/menu_icon.png', PHONE_LEFT+175, dimensions=(20, 20))
@@ -155,16 +200,16 @@ def start(display_surf, load_from):
     back_icon.add(general_screen, general_screen_clickables)
     menu_icon.add(general_screen, general_screen_clickables)
 
-    main_screen = pygame.sprite.Group()
+    main_screen = Screen('main')
     main_screen_clickables = pygame.sprite.Group()
-    recipe_app = AppIcon(PHONE_LEFT+25, PHONE_TOP+150)
-    health_app = AppIcon(PHONE_LEFT + 145, PHONE_TOP + 150)
-    setting_app = AppIcon(PHONE_LEFT + 25, PHONE_TOP + 270)
+    recipe_app = Button(PHONE_LEFT + 25, PHONE_TOP + 150, 100, 100, 'Recipe')
+    health_app = Button(PHONE_LEFT + 145, PHONE_TOP + 150, 100, 100, 'Health')
+    setting_app = Button(PHONE_LEFT + 25, PHONE_TOP + 270, 100, 100, 'Settings')
     recipe_app.add(main_screen, main_screen_clickables)
     health_app.add(main_screen, main_screen_clickables)
     setting_app.add(main_screen, main_screen_clickables)
 
-    recipe_screen = pygame.sprite.Group()
+    recipe_screen = Screen('recipe')
     recipe_screen_clickables = pygame.sprite.Group()
     PhoneTopBar('Choose My Recipe').add(recipe_screen)
     current_top = PHONE_TOP+TOP_BAR_HEIGHT+5
@@ -173,6 +218,9 @@ def start(display_surf, load_from):
         food_row.add(recipe_screen, recipe_screen_clickables)
         current_top += RECIPE_ROW_HEIGHT+5
         if current_top + RECIPE_ROW_HEIGHT >= PHONE_TOP + PHONE_HEIGHT: break
+
+    add_to_cart_btn = Button(PHONE_LEFT+40, PHONE_TOP+PHONE_HEIGHT-100, 80, 30, 'Buy')
+    confirm_btn = Button(PHONE_LEFT + 160, PHONE_TOP + PHONE_HEIGHT - 100, 80, 30, 'Confirm')
 
     active_screen = main_screen
     last_screen = main_screen
@@ -200,10 +248,29 @@ def start(display_surf, load_from):
                     if collisions:
                         collision = collisions[0]  # Should only be one
                         food_chosen = food_data[collision.index]
-                        food_page_screen = pygame.sprite.Group()
-                        page_base = RecipePage(food_chosen)
+                        food_page_screen = Screen('food_page')
+                        food_page_screen.food = food_chosen
+                        food_page_screen_clickables = pygame.sprite.Group()
+                        page_base = RecipePage(food_chosen, cart)
                         page_base.add(food_page_screen)
-                        active_screen = food_page_screen
+                        PhoneTopBar(food_chosen['name']).add(food_page_screen)
+                        add_to_cart_btn.add(food_page_screen, food_page_screen_clickables)
+                        confirm_btn.add(food_page_screen, food_page_screen_clickables)
+
+                        active_screen, last_screen = food_page_screen, recipe_screen
+                elif active_screen.name == "food_page":
+                    for collision in mouse_sprite.group_collide(food_page_screen_clickables):
+                        if collision == add_to_cart_btn:
+                            if len(cart) >= 3:
+                                messages.append('You decided not to eat more than 3 courses. Too much.')
+                                text_box.update(messages)
+                            else:
+                                cart.append(active_screen.food)
+                                food_page_screen.update(cart)
+                                scene_logger.info(f'Added {food["name"]} to cart')
+                        elif collision == confirm_btn:
+                            player.eat(cart)
+                            
                 for collision in mouse_sprite.group_collide(general_screen_clickables):
                     if collision == back_icon:
                         active_screen, last_screen = last_screen, active_screen

@@ -26,6 +26,7 @@ END_NORMAL = 6
 
 # UI-related
 DEFAULT_FONT_FILE = './resources/Linden Hill.otf'
+DEFAULT_ITALICS_FILE = './resources/Linden Hill Italic.otf'
 
 
 # Colors
