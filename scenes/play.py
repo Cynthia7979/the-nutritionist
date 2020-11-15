@@ -337,6 +337,7 @@ def start(display_surf, load_from):
                                 msgs_to_add, return_value = player.time_pass()
                                 messages += msgs_to_add
                                 text_box.update(messages)
+                                scene_logger.debug(player)
                                 if return_value != 0:
                                     fade_to_black(display_surf)
                                     return return_value

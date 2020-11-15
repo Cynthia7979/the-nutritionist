@@ -94,6 +94,9 @@ class Person:
         self.state["Sodium"] -= 3
         messages.append("You feel hungry and start ordering food.")
         return messages, self.check_state()
+
+    def __str__(self):
+        return f'{self.state}, {self.apr}'
     
 
 class FoodList:
