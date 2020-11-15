@@ -16,6 +16,12 @@ CLOCK = pygame.time.Clock()
 TO_PLAY = 'to_play'
 TO_MAIN_MENU = 'to_main_menu'
 TO_LOAD = 'to_load'
+END_HEART_ATTACK = 1
+END_VITAMINS = 2
+END_OBESITY = 3
+END_STARVATION = 4
+END_ILLUSION = 5
+END_NORMAL = 6
 
 
 # UI-related
