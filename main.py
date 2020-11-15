@@ -1,7 +1,8 @@
 import sys
+import pygame
 from pygame.locals import *
 from scenes import main_menu
-from scenes import *
+from util import *
 
 DISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))
 
