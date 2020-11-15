@@ -17,8 +17,8 @@ def main():
 
     state = main_menu.start(DISPLAY)
     if QUIT in state:
-        logger_exit()
         GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
+        logger_exit()
         sys.exit(state[1])
     elif TO_PLAY in state:
         play.start(DISPLAY, state[1])

@@ -31,6 +31,7 @@ BG_PLACEHOLDER = (87, 87, 87)
 # Dimensions
 LEFT_DIALOG_WIDTH, LEFT_DIALOG_HEIGHT = (244.5, HEIGHT)
 PHONE_WIDTH, PHONE_HEIGHT = (270, 600)
+PHONE_LEFT, PHONE_TOP = (LEFT_DIALOG_WIDTH+20, 20)
 
 
 # Functions
@@ -44,3 +45,12 @@ def render_text(text: str, size=12, color=BLACK, font_file=DEFAULT_FONT_FILE, *a
     font_surf = font.render(text, True, color, *args, **kwargs)
     font_rect = font_surf.get_rect()
     return font_surf, font_rect
+
+
+def load_image(image_path: str, dimensions=()):
+    """:returns image_surf, image_rect"""
+    image_surf = pygame.image.load(image_path)
+    if dimensions:
+        image_surf = pygame.transform.scale(image_surf, dimensions)
+    image_rect = image_surf.get_rect()
+    return image_surf, image_rect
