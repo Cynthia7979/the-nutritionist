@@ -18,34 +18,35 @@ def main():
     # For debugging ↓
     # state = end_obesity.start(DISPLAY)
 
-    state = main_menu.start(DISPLAY)
-    if QUIT in state:
-        GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
-        logger_exit()
-        sys.exit(state[1])
-    elif TO_PLAY in state:
-        state = play.start(DISPLAY, state[1])
-        if END in state:
-            if END_NORMAL in state:
-                # end_normal.play()
-                pass
-            elif END_HEART_ATTACK in state:
-                pass
-            elif END_OBESITY in state:
-                state = end_obesity.start(DISPLAY)
-                if TO_HELL_OBESITY_COURSE in state:
-                    state = hell_obesity_course.start(DISPLAY)
-                    if QUIT in state:
-                        GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
-                        logger_exit()
-                        sys.exit(state[1])
-            elif END_STARVATION in state:
-                pass
-            elif END_ILLUSION in state:
-                pass
-    elif TO_LOAD in state:
-        # load_screen.start()
-        pass
+    while True:
+        state = main_menu.start(DISPLAY)
+        if QUIT in state:
+            GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
+            logger_exit()
+            sys.exit(state[1])
+        elif TO_PLAY in state:
+            state = play.start(DISPLAY, state[1])
+            if END in state:
+                if END_NORMAL in state:
+                    # end_normal.play()
+                    pass
+                elif END_HEART_ATTACK in state:
+                    pass
+                elif END_OBESITY in state:
+                    state = end_obesity.start(DISPLAY)
+                    if TO_HELL_OBESITY_COURSE in state:
+                        state = hell_obesity_course.start(DISPLAY)
+                        if QUIT in state:
+                            GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
+                            logger_exit()
+                            sys.exit(state[1])
+                elif END_STARVATION in state:
+                    pass
+                elif END_ILLUSION in state:
+                    pass
+        elif TO_LOAD in state:
+            # load_screen.start()
+            pass
 
 
 if __name__ == '__main__':
