@@ -214,6 +214,9 @@ class Avatar(pygame.sprite.Sprite):
         # Add more logic when (if) more images are drawn
         return f'./resources/age_young_health_{health}_obesity_1.png'
 
+    def update(self, person):
+        self.__init__(person)
+
 
 def start(display_surf, load_from):
     global scene_logger
@@ -341,7 +344,9 @@ def start(display_surf, load_from):
                                 if return_value != 0:
                                     fade_to_black(display_surf)
                                     return return_value
-                                else: active_screen, last_screen = main_screen, main_screen
+                                else:
+                                    active_screen, last_screen = main_screen, main_screen
+                                    avatar.update(player)
                 for collision in mouse_sprite.group_collide(general_screen_clickables):
                     if collision == back_icon:
                         active_screen, last_screen = last_screen, active_screen
