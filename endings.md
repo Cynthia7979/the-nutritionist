@@ -5,7 +5,8 @@ List of endings (spoiler alert)
 1. Die of heart attack  
 Click with your heartbeat: Try to catch up with
 the bumping heart
-2. Die of lack of vitamins/minerals
+2. Die of lack of vitamins/minerals  
+Becomes god
 3. Die of obesity  
 Death was disappointed about your eating habits and took
 you to Hell. Demons gave you a course on obesity prevension.

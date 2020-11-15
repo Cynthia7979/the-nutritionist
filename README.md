@@ -32,6 +32,7 @@ Packages used:
 
 # Resources Used
 * [Linden Hill](https://www.theleagueofmoveabletype.com/linden-hill) from The League of Moveable Type
+* [Recipes](https://www.choosemyplate.gov/myplatekitchen/recipes) from ChooseMyPlate: U.S. DEPARTMENT OF AGRICULTURE
 
 # Scene Template
 ```python

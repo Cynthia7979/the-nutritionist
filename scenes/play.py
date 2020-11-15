@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from time import sleep
 from util import *
 from util import json_parse
 from logic import nutrition
@@ -13,6 +14,23 @@ class Screen(pygame.sprite.Group):
     def __init__(self, name, *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.name = name
+
+
+@logged_class
+class PhoneScreen(Screen):
+    def __init__(self, name, *args, **kwargs):
+        super().__init__(name, *args, **kwargs)
+        self.phone_surf = pygame.Surface((PHONE_WIDTH, PHONE_HEIGHT-TOP_BAR_HEIGHT-30), flags=SRCALPHA)
+        self.phone_rect = self.phone_surf.get_rect(topleft=(PHONE_LEFT, PHONE_TOP+TOP_BAR_HEIGHT))
+        self.logger.debug(self.phone_rect)
+
+    def draw(self, surface: pygame.Surface):
+        self.phone_surf = pygame.Surface((PHONE_WIDTH, PHONE_HEIGHT - TOP_BAR_HEIGHT), flags=SRCALPHA)
+        super().draw(self.phone_surf)
+        surface.blit(self.phone_surf, self.phone_rect)
+
+    def update(self, y_delta, *args, **kwargs):
+        super().update(y_delta, *args, **kwargs)
 
 
 class MouseSprite(pygame.sprite.Sprite):
@@ -29,7 +47,7 @@ class Texts(pygame.sprite.Sprite):
 
     def __init__(self, texts=()):
         super().__init__()
-        self.logger.debug('Creating Texts.')
+        self.logger.debug(f'Creating Texts for {texts}')
 
         margin = 20
         max_characters = 20
@@ -42,7 +60,7 @@ class Texts(pygame.sprite.Sprite):
 
         to_blit = []
         current_bottom = LEFT_DIALOG_HEIGHT/2
-        for text in texts:
+        for text in texts[::-1]:
             splited_text = [text[i:i+max_characters] for i in range(0, len(text), max_characters)]
             current_bottom -= line_height*len(splited_text)
             for segment in splited_text:
@@ -114,8 +132,10 @@ class Button(pygame.sprite.Sprite):
 class RecipeRow(pygame.sprite.Sprite):
     def __init__(self, top, food_data, index):
         super().__init__()
-        self.logger.debug(f'Creating RecipeRow for top={top}, index={index}, food={food_data}')
+        # self.logger.debug(f'Creating RecipeRow for top={top}, index={index}, food={food_data}')
         self.index = index
+        self.top = top
+        self.food = food_data
 
         self.image = pygame.Surface((PHONE_WIDTH, RECIPE_ROW_HEIGHT))
         self.rect = self.image.get_rect(topleft=(PHONE_LEFT, top))
@@ -127,6 +147,9 @@ class RecipeRow(pygame.sprite.Sprite):
         category_surf, category_rect = render_text(food_data['category'])
         category_rect.topleft = (10, 40)
         self.image.blits(((name_surf, name_rect), (category_surf, category_rect)))
+
+    def update(self, y_delta, *args, **kwargs):
+        self.__init__(self.top-y_delta, self.food, self.index)
 
 
 @logged_class
@@ -186,10 +209,12 @@ def start(display_surf, load_from):
     food_data = json_parse.get_data('food_data.json')
     messages = []
     cart = []
+    recipe_screen_start_index = 0
 
     # UI
     left_dialog_rect = pygame.Rect((0, 0,
                                     LEFT_DIALOG_WIDTH, LEFT_DIALOG_HEIGHT))
+    # phone_size_screen = PhoneScreen('phone')
     general_screen = Screen('general')
     general_screen_clickables = pygame.sprite.Group()
     back_icon = BottomMenuButton('resources/back_icon.png', PHONE_LEFT+90, dimensions=(20, 20))
@@ -231,12 +256,13 @@ def start(display_surf, load_from):
         pygame.draw.line(display_surf, get_gray(200), (0, HEIGHT/2-1), (LEFT_DIALOG_WIDTH, HEIGHT/2-1))
         general_screen.draw(display_surf)
         active_screen.draw(display_surf)
+        # if active_screen.name == 'recipe': phone_size_screen.draw(display_surf)
 
         for event in pygame.event.get():
             if event.type == QUIT:
                 scene_logger.info('Quitting game...')
                 return QUIT, 0
-            elif event.type == MOUSEBUTTONUP:  # Click event
+            elif event.type == MOUSEBUTTONUP:  # Mouse event
                 mouse_pos = event.pos
                 mouse_sprite = MouseSprite(*mouse_pos)
                 if active_screen == main_screen:
@@ -245,7 +271,7 @@ def start(display_surf, load_from):
                             active_screen, last_screen = recipe_screen, active_screen
                 elif active_screen == recipe_screen:
                     collisions = mouse_sprite.group_collide(recipe_screen_clickables)
-                    if collisions:
+                    if collisions and event.button in (1,2,3):
                         collision = collisions[0]  # Should only be one
                         food_chosen = food_data[collision.index]
                         food_page_screen = Screen('food_page')
@@ -256,7 +282,6 @@ def start(display_surf, load_from):
                         PhoneTopBar(food_chosen['name']).add(food_page_screen)
                         add_to_cart_btn.add(food_page_screen, food_page_screen_clickables)
                         confirm_btn.add(food_page_screen, food_page_screen_clickables)
-
                         active_screen, last_screen = food_page_screen, recipe_screen
                 elif active_screen.name == "food_page":
                     for collision in mouse_sprite.group_collide(food_page_screen_clickables):
@@ -272,16 +297,77 @@ def start(display_surf, load_from):
                             msgs_to_add, return_value = player.eat(cart)
                             messages += msgs_to_add
                             text_box.update(messages)
-                            scene_logger.info(f'Eaten cart {cart}: {return_value}')
-                            cart = []
-                            food_page_screen.update(cart)
+                            scene_logger.debug(cart)
+                            scene_logger.info(f'Eaten cart: {return_value}')
                             if return_value != 0: return return_value
+                            else:
+                                success_prompt = pygame.sprite.Group(
+                                    Button(PHONE_LEFT+10, PHONE_TOP+PHONE_HEIGHT/2,
+                                    PHONE_WIDTH-20, 50, 'Ordered!'))
+                                success_prompt.draw(display_surf)
+                                cart = []
+                                food_page_screen.update(cart)
+                                pygame.display.flip()
+                                sleep(1)
+
+                                show_time(display_surf, display_surf, 'Next meal...')
+                                msgs_to_add, return_value = player.time_pass()
+                                messages += msgs_to_add
+                                text_box.update(messages)
+                                if return_value != 0: return return_value
+                                else: active_screen, last_screen = main_screen, main_screen
                 for collision in mouse_sprite.group_collide(general_screen_clickables):
                     if collision == back_icon:
                         active_screen, last_screen = last_screen, active_screen
                     elif collision == menu_icon:
                         active_screen, last_screen = main_screen, active_screen
+            elif event.type == MOUSEBUTTONDOWN:
+                scene_logger.debug(event.button)
+                if event.button == 5 or event.button == 6:
+                    scene_logger.debug('Scrolling up')
+                    recipe_screen_start_index = min(recipe_screen_start_index + 1, len(food_data))
+                elif event.button == 4 or event.button == 7:
+                    scene_logger.debug('Scrolling down')
+                    recipe_screen_start_index = max(recipe_screen_start_index - 1, 0)
+                if event.button not in (1,2,3):
+                    # phone_size_screen.update(recipe_screen_start_y)
+                    recipe_screen.empty()
+                    recipe_screen_clickables.empty()
+                    PhoneTopBar('Choose My Recipe').add(recipe_screen)
+                    current_top = PHONE_TOP + TOP_BAR_HEIGHT + 5
+                    for i, food in enumerate(food_data[recipe_screen_start_index:]):
+                        food_row = RecipeRow(current_top, food, i+recipe_screen_start_index)
+                        food_row.add(recipe_screen, recipe_screen_clickables)
+                        current_top += RECIPE_ROW_HEIGHT + 5
+                        if current_top + RECIPE_ROW_HEIGHT >= PHONE_TOP + PHONE_HEIGHT: break
+
         pygame.display.flip()  # Update screen
         CLOCK.tick(FPS)  # Balance loop time
 
 
+def show_time(display_surf, surf: pygame.Surface, time: str):
+    rect = surf.get_rect(topleft=(0,0))
+    surf_alpha = surf.copy().convert_alpha()
+    time_surf, time_rect = render_text(time, 48, WHITE, DEFAULT_ITALICS_FILE)
+    time_rect.center = (WIDTH/2, HEIGHT/2)
+    scene_logger.debug('Black out...')
+    for alpha in range(0, 256, 3):
+        # scene_logger.debug(alpha)
+        black_surf = pygame.Surface((WIDTH, HEIGHT), flags=SRCALPHA)
+        black_surf.fill((0, 0, 0, alpha))
+        display_surf.blit(surf_alpha, rect)
+        display_surf.blit(black_surf, rect)
+        display_surf.blit(time_surf, time_rect)
+        pygame.display.flip()
+        CLOCK.tick(FPS)
+    sleep(0.7)
+    scene_logger.debug('Fade in...')
+    for alpha in range(255, 0, -3):
+        # scene_logger.debug(alpha)
+        black_surf = pygame.Surface((WIDTH, HEIGHT), flags=SRCALPHA)
+        black_surf.fill((0, 0, 0, alpha))
+        display_surf.blit(surf_alpha, rect)
+        display_surf.blit(black_surf, rect)
+        display_surf.blit(time_surf, time_rect)
+        pygame.display.flip()
+        CLOCK.tick(FPS)

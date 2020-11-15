@@ -74,7 +74,7 @@ class Person:
         self.logger.debug(self.state)
         self.logger.debug(self.apr)
         messages = []
-        if foods == ():
+        if not foods:
             messages.append("You gave up eating and went back to work")
         else:
             messages.append("You enjoyed your food very much")
