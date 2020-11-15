@@ -34,6 +34,9 @@ Packages used:
 * [Linden Hill](https://www.theleagueofmoveabletype.com/linden-hill) from The League of Moveable Type
 * [Recipes](https://www.choosemyplate.gov/myplatekitchen/recipes) from ChooseMyPlate: U.S. DEPARTMENT OF AGRICULTURE
 * [Sprites](https://opengameart.org) from Open Game Art, raw or modified.
+    * [Death (Assassin)](https://opengameart.org/content/assassin)
+    * [Professor Ghost](https://opengameart.org/content/stendhal-ghost)
+    * [Fire Cave BG](https://opengameart.org/content/fire-rpg-background)
 
 # Scene Template
 ```python

@@ -16,10 +16,9 @@ def main():
     pygame.display.set_caption('The Nutritionist')
 
     # For debugging ↓
-    state = end_obesity.start(DISPLAY)
-    if TO_HELL_OBESITY_COURSE in state:
-        hell_obesity_course.start(DISPLAY)
-    # state = main_menu.start(DISPLAY)
+    # state = end_obesity.start(DISPLAY)
+
+    state = main_menu.start(DISPLAY)
     if QUIT in state:
         GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
         logger_exit()
@@ -34,6 +33,12 @@ def main():
                 pass
             elif END_OBESITY in state:
                 state = end_obesity.start(DISPLAY)
+                if TO_HELL_OBESITY_COURSE in state:
+                    state = hell_obesity_course.start(DISPLAY)
+                    if QUIT in state:
+                        GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
+                        logger_exit()
+                        sys.exit(state[1])
             elif END_STARVATION in state:
                 pass
             elif END_ILLUSION in state:
