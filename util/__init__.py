@@ -1,4 +1,5 @@
 # Working Directory: the-nutrtionist/
+# All dimensions are 3/2 of the dimension in the prototype
 from .logger import *
 
 import pygame
@@ -19,14 +20,17 @@ TO_LOAD = 'to_load'
 DEFAULT_FONT_FILE = './resources/Linden Hill.otf'
 
 
-# Syntax sugar
+# Colors
 RED = (255, 0, 0)
 GREED = (0, 255, 0)
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-
 BG_PLACEHOLDER = (87, 87, 87)
+
+# Dimensions
+LEFT_DIALOG_WIDTH, LEFT_DIALOG_HEIGHT = (244.5, HEIGHT)
+PHONE_WIDTH, PHONE_HEIGHT = (270, 600)
 
 
 # Functions

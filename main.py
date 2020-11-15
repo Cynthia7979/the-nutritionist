@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame.locals import *
-from scenes import main_menu
+from scenes import main_menu, play
 from util import *
 
 DISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -21,7 +21,7 @@ def main():
         GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
         sys.exit(state[1])
     elif TO_PLAY in state:
-        # game.start(state[1])
+        play.start(DISPLAY, state[1])
         pass
     elif TO_LOAD in state:
         # load_screen.start()
