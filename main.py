@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame.locals import *
-from scenes import main_menu, play
+from scenes import main_menu, play, end_obesity, hell_obesity_course
 from util import *
 
 DISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -15,7 +15,11 @@ def main():
     pygame.init()
     pygame.display.set_caption('The Nutritionist')
 
-    state = main_menu.start(DISPLAY)
+    # For debugging ↓
+    state = end_obesity.start(DISPLAY)
+    if TO_HELL_OBESITY_COURSE in state:
+        hell_obesity_course.start(DISPLAY)
+    # state = main_menu.start(DISPLAY)
     if QUIT in state:
         GLOBAL_LOGGER.info('Bye ヾ(·u· )))')
         logger_exit()
@@ -29,7 +33,7 @@ def main():
             elif END_HEART_ATTACK in state:
                 pass
             elif END_OBESITY in state:
-                pass
+                state = end_obesity.start(DISPLAY)
             elif END_STARVATION in state:
                 pass
             elif END_ILLUSION in state:
