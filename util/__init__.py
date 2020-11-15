@@ -3,6 +3,8 @@
 from .logger import *
 
 import pygame
+from os import getcwd
+GLOBAL_LOGGER.debug(getcwd())
 
 # Pygame-related
 WIDTH, HEIGHT = (555, 645)
