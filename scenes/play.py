@@ -299,7 +299,9 @@ def start(display_surf, load_from):
                             text_box.update(messages)
                             scene_logger.debug(cart)
                             scene_logger.info(f'Eaten cart: {return_value}')
-                            if return_value != 0: return return_value
+                            if return_value != 0:
+                                fade_to_black(display_surf)
+                                return return_value
                             else:
                                 success_prompt = pygame.sprite.Group(
                                     Button(PHONE_LEFT+10, PHONE_TOP+PHONE_HEIGHT/2,
@@ -314,7 +316,9 @@ def start(display_surf, load_from):
                                 msgs_to_add, return_value = player.time_pass()
                                 messages += msgs_to_add
                                 text_box.update(messages)
-                                if return_value != 0: return return_value
+                                if return_value != 0:
+                                    fade_to_black(display_surf)
+                                    return return_value
                                 else: active_screen, last_screen = main_screen, main_screen
                 for collision in mouse_sprite.group_collide(general_screen_clickables):
                     if collision == back_icon:
@@ -369,5 +373,20 @@ def show_time(display_surf, surf: pygame.Surface, time: str):
         display_surf.blit(surf_alpha, rect)
         display_surf.blit(black_surf, rect)
         display_surf.blit(time_surf, time_rect)
+        pygame.display.flip()
+        CLOCK.tick(FPS)
+
+
+def fade_to_black(display_surf, text=''):
+    rect = display_surf.get_rect(topleft=(0,0))
+    text_surf, text_rect = render_text(text, 48, WHITE, DEFAULT_ITALICS_FILE)
+    text_rect.center = (WIDTH / 2, HEIGHT / 2)
+    scene_logger.debug('Black out...')
+    for alpha in range(0, 256, 3):
+        # scene_logger.debug(alpha)
+        black_surf = pygame.Surface((WIDTH, HEIGHT), flags=SRCALPHA)
+        black_surf.fill((0, 0, 0, 1))
+        display_surf.blit(black_surf, rect)
+        display_surf.blit(text_surf, text_rect)
         pygame.display.flip()
         CLOCK.tick(FPS)

@@ -28,6 +28,14 @@ def start(display_surf):
     click_text_surf, click_text_rect = render_text('Click!!!', 54, WHITE)
     click_text_rect.midtop = (WIDTH/2, 30)
 
+    # Texts
+    display_surf.fill(BLACK)
+    text_surf, text_rect = load_image('./resources/obesity_texts.png')
+    text_rect.midleft = (0, HEIGHT/2)
+    display_surf.blit(text_surf, text_rect)
+    pygame.display.flip()
+    sleep(5)
+
     # Talking...
     display_surf.fill(BG_PLACEHOLDER)
     pygame.draw.rect(display_surf, get_gray(20), (0, HEIGHT / 2, WIDTH, HEIGHT / 2))  # Ground
