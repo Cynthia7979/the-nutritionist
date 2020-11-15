@@ -4,18 +4,22 @@ import util.json_parse as json_parse
 
 class Person:
     def __init__(self, energy=100, sodium=100, mineral=100, vitamin=100,
-                 age=18, health=3, size=1):
-        self.state = {
-            "Energy": energy,
-            "Sodium": sodium,
-            "Mineral": mineral,
-            "Vitamin": vitamin,
-        }
-        self.apr = {
-            "Age": age,  # 18-80
-            "Health": health,  # 1,2,3
-            "Size": size  # 0,1,2
-        }
+                 age=18, health=3, size=1, state=None, apr=None):
+        if state: self.state = state
+        else:
+            self.state = {
+                "Energy": energy,
+                "Sodium": sodium,
+                "Mineral": mineral,
+                "Vitamin": vitamin,
+            }
+        if apr: self.apr = apr
+        else:
+            self.apr = {
+                "Age": age,  # 18-80
+                "Health": health,  # 1,2,3
+                "Size": size  # 0,1,2
+            }
 
     # Check events(?) and update appearance
     def check_state(self):
