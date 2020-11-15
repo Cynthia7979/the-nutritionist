@@ -50,22 +50,22 @@ class Person:
 
 
         if self.state["Sodium"] > 200:
-            return END_HEART_ATTACK  # Die of heart attack
+            return END, END_HEART_ATTACK  # Die of heart attack
         
         if self.state["Mineral"] < 0 or self.state["Vitamin"] < 0:
-            return END_VITAMINS  # Die of lack of essencials, maybe illusion
+            return END, END_VITAMINS  # Die of lack of essencials, maybe illusion
         
         if self.state["Energy"] > 300:
-            return END_OBESITY  # Die of obesity
+            return END, END_OBESITY  # Die of obesity
 
         if self.state["Energy"] < 0:
-            return END_STARVATION  # Starve to death
+            return END, END_STARVATION  # Starve to death
 
         if self.state["Sodium"] < 0:
-            return END_ILLUSION  # Die of nervous system breakdown, maybe illusion
+            return END, END_ILLUSION  # Die of nervous system breakdown, maybe illusion
 
         if self.apr["Age"]>80:
-            return END_NORMAL  # Die for living too long
+            return END, END_NORMAL  # Die for living too long
 
         return 0
 

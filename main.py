@@ -21,8 +21,19 @@ def main():
         logger_exit()
         sys.exit(state[1])
     elif TO_PLAY in state:
-        play.start(DISPLAY, state[1])
-        pass
+        state = play.start(DISPLAY, state[1])
+        if END in state:
+            if END_NORMAL in state:
+                # end_normal.play()
+                pass
+            elif END_HEART_ATTACK in state:
+                pass
+            elif END_OBESITY in state:
+                pass
+            elif END_STARVATION in state:
+                pass
+            elif END_ILLUSION in state:
+                pass
     elif TO_LOAD in state:
         # load_screen.start()
         pass
