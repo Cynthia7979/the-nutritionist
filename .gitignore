@@ -1,6 +1,8 @@
 # Enter custom gitignore here
 .idea/
 Logs/*.log
+thumbs.db
+Thumbs.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
