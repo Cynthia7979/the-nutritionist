@@ -97,7 +97,7 @@ class AppIcon(pygame.sprite.Sprite):
 
 
 class RecipeRow(pygame.sprite.Sprite):
-    def __init__(self, top, food_data):
+    def __init__(self, top, food_data, index):
         super().__init__()
 
         self.image = pygame.Surface((PHONE_WIDTH, RECIPE_ROW_HEIGHT))
@@ -111,17 +111,21 @@ class RecipeRow(pygame.sprite.Sprite):
         category_rect.topleft = (10, 40)
         self.image.blits(((name_surf, name_rect), (category_surf, category_rect)))
 
+        self.index = index
+
 
 class RecipePage(pygame.sprite.Sprite):
     def __init__(self, food):
         super().__init__()
 
-        self.image = pygame.Surface((PHONE_WIDTH, PHONE_HEIGHT))
+        self.image = pygame.Surface((PHONE_WIDTH, PHONE_HEIGHT), flags=SRCALPHA)
         self.rect = self.image.get_rect(topleft=(PHONE_LEFT, PHONE_TOP))
 
         title_surf, title_rect = render_text(food['name'], 30)
-        title_rect.topleft = PHONE_LEFT+20,
+        title_rect.topleft = (PHONE_LEFT+20, TOP_BAR_HEIGHT+10)
         category_surf, category_rect = render_text(food['category'], 20)
+        category_rect.topleft = (PHONE_LEFT+20, title_rect.bottom+10)
+        self.image.blits(((title_surf, title_rect), (category_surf, category_rect)))
 
 
 def start(display_surf, load_from):
@@ -164,8 +168,8 @@ def start(display_surf, load_from):
     recipe_screen_clickables = pygame.sprite.Group()
     PhoneTopBar('Choose My Recipe').add(recipe_screen)
     current_top = PHONE_TOP+TOP_BAR_HEIGHT+5
-    for food in food_data:
-        food_row = RecipeRow(current_top, food)
+    for i, food in enumerate(food_data):
+        food_row = RecipeRow(current_top, food, i)
         food_row.add(recipe_screen, recipe_screen_clickables)
         current_top += RECIPE_ROW_HEIGHT+5
         if current_top + RECIPE_ROW_HEIGHT >= PHONE_TOP + PHONE_HEIGHT: break
@@ -192,8 +196,14 @@ def start(display_surf, load_from):
                         if collision == recipe_app:
                             active_screen, last_screen = recipe_screen, active_screen
                 elif active_screen == recipe_screen:
-                    for collision in mouse_sprite.group_collide(recipe_screen_clickables):
-                        # Construct a recipe details screen
+                    collisions = mouse_sprite.group_collide(recipe_screen_clickables)
+                    if collisions:
+                        collision = collisions[0]  # Should only be one
+                        food_chosen = food_data[collision.index]
+                        food_page_screen = pygame.sprite.Group()
+                        page_base = RecipePage(food_chosen)
+                        page_base.add(food_page_screen)
+                        active_screen = food_page_screen
                 for collision in mouse_sprite.group_collide(general_screen_clickables):
                     if collision == back_icon:
                         active_screen, last_screen = last_screen, active_screen
