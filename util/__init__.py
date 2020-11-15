@@ -17,7 +17,7 @@ TO_LOAD = 'to_load'
 
 
 # UI-related
-DEFAULT_FONT_FILE = './resources/Linden Hill.otf'
+DEFAULT_FONT_FILE = '../resources/Linden Hill.otf'
 
 
 # Colors
